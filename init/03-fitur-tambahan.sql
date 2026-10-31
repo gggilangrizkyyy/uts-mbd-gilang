@@ -1,21 +1,10 @@
--- =====================================================================
--- FITUR TAMBAHAN (pembeda) - UTS Manajemen Basis Data
--- Simpan sebagai init/03-fitur-tambahan.sql
--- Dijalankan sebagai postgres, setelah 01-schema.sql dan 02-roles.sql
--- =====================================================================
-
--- Biar objek baru milik data_engineer otomatis bisa dipakai backend_dev
--- (tabel/view sudah ditangani default privileges di 02-roles.sql;
---  sequence belum, jadi ditambah di sini)
 ALTER DEFAULT PRIVILEGES FOR ROLE data_engineer IN SCHEMA salam
   GRANT USAGE, SELECT ON SEQUENCES TO backend_dev;
 
 -- Semua objek baru dibuat oleh data_engineer (sesuai aturan owner = DDL)
 SET ROLE data_engineer;
 
--- ---------------------------------------------------------------------
 -- 1) Tabel tambahan dengan foreign key ke mahasiswas
--- ---------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS salam.matkul (
     id    SERIAL PRIMARY KEY,
     kode  VARCHAR(10)  NOT NULL UNIQUE,
@@ -32,9 +21,7 @@ CREATE TABLE IF NOT EXISTS salam.krs (
     UNIQUE (mahasiswa_id, matkul_id, tahun_akademik)
 );
 
--- ---------------------------------------------------------------------
 -- 2) Audit log + trigger pada mahasiswas (INSERT / UPDATE / DELETE)
--- ---------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS salam.audit_log (
     id          BIGSERIAL PRIMARY KEY,
     tabel       VARCHAR(50) NOT NULL,
@@ -71,9 +58,7 @@ CREATE TRIGGER trg_audit_mahasiswas
 AFTER INSERT OR UPDATE OR DELETE ON salam.mahasiswas
 FOR EACH ROW EXECUTE FUNCTION salam.fn_audit_mahasiswas();
 
--- ---------------------------------------------------------------------
 -- 3) View
--- ---------------------------------------------------------------------
 CREATE OR REPLACE VIEW salam.v_mahasiswa_cumlaude AS
 SELECT nim, nama, semester, ipk
 FROM salam.mahasiswas
@@ -95,13 +80,10 @@ GRANT SELECT ON salam.v_mahasiswa_cumlaude, salam.v_ringkasan_sks TO bi_dev;
 
 RESET ROLE;
 
--- ---------------------------------------------------------------------
--- 4) Seed data (ganti dengan data milikmu sendiri)
--- ---------------------------------------------------------------------
+-- 4) Input Data Baru
 INSERT INTO salam.mahasiswas (nim, nama, email, semester, ipk) VALUES
-    ('1247050049', 'Tuan Gilang',    'gilang@mail.com',  5, 3.75),
-    ('1247050101', 'Contoh Satu',    'satu@mail.com',    5, 3.20),
-    ('1247050102', 'Contoh Dua',     'dua@mail.com',     5, 3.55)
+    ('1247050101', 'Maman Racing',    'mancing@mail.com',    5, 3.20),
+    ('1247050102', 'Udin Nasgor',     'dinnasgor@mail.com',     5, 3.55)
 ON CONFLICT (nim) DO NOTHING;
 
 INSERT INTO salam.matkul (kode, nama, sks) VALUES
