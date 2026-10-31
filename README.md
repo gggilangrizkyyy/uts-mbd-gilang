@@ -1,6 +1,6 @@
-# UTS Manajemen Basis Data: PostgreSQL + pgAdmin 4 dengan Docker
+# UTS Manajemen Basis Data
 
-Proyek 1 / UTS Manajemen Basis Data, Informatika UIN Sunan Gunung Djati Bandung (TA 2026/2027).
+Proyek 1 / UTS Manajemen Basis Data
 
 - **Nama:** Gilang Rizky Ramadhan
 - **NIM:** 1247050049
